@@ -1,14 +1,14 @@
 import { test } from '@playwright/test';
 
-test('timeout in step', async ({ page }) => {
-  await test.step('step 1', async () => {
-    await page.goto('https://example.com')
-  })
-  await test.step('step 2', () =>
-    new Promise((resolve) =>
+test('timeout in step', async ({}) => {
+  await test.step('my step', async () => {
+    await test.step('before timeout', async () => console.log('before timeout'))
+    await new Promise((resolve) => 
       setTimeout(async () => {
-        await page.goto('https://example.com')
+        await test.step('inside timeout', async () => console.log('inside timeout'))
         resolve(null)
-      }, 1000),
-    ))
+      }, 1000)
+    )
+    await test.step('after timeout', async () => console.log('after timeout'))
+  })
 })
